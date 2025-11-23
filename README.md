@@ -24,7 +24,7 @@ Urgency Override: Tasks due today (daysUntilDue <= 0) are assigned a very high p
 
 Real-time Sorting: Uses Java's Comparator and Lambda expressions for fast, efficient sorting of the task list by the calculated score in descending order.
 
-Prioritized Display: Prints a formatted, easy-to-read table to the console, clearly highlighting the single highest-priority task with a ⭐ NEXT UP tag.
+Prioritized Display: Prints a formatted, easy-to-read table to the console, clearly highlighting the single highest-priority task with a NEXT UP tag.
 
 Technologies/Tools Used
 
@@ -70,7 +70,7 @@ Test Case 1: Initial Tasks
 Verify that "Review Java Code" (Score 25.00) is ranked higher than "Final Project - Implementation" (Score 21.43), despite the latter having higher total effort, due to its closer deadline.
 
 Test Case 2: Immediate Urgency
-Observe the second output table (after the "SIMULATION" message). The task "Submit Lab Report" (due in 0 days) must immediately jump to the top and be marked with ⭐ NEXT UP, demonstrating the urgency override logic.
+Observe the second output table (after the "SIMULATION" message). The task "Submit Lab Report" (due in 0 days) must immediately jump to the top and be marked with NEXT UP, demonstrating the urgency override logic.
 
 Screenshots (Console Output Simulation)
 
