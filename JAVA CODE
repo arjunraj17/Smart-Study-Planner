@@ -1,0 +1,147 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+public class PlannerApp {
+
+    // ====================================================================
+    // 1. INNER CLASS: StudyTask (The Model)
+    //    Represents a single academic or personal task.
+    // ====================================================================
+
+    /**
+     * An inner class representing a single study task.
+     */
+    public static class StudyTask {
+        private String description;
+        private int estimatedEffortHours; 
+        private int daysUntilDue;         
+
+        public StudyTask(String description, int estimatedEffortHours, int daysUntilDue) {
+            this.description = description;
+            this.estimatedEffortHours = estimatedEffortHours;
+            this.daysUntilDue = daysUntilDue;
+        }
+
+        // Getters
+        public String getDescription() {
+            return description;
+        }
+
+        public int getEstimatedEffortHours() {
+            return estimatedEffortHours;
+        }
+
+        public int getDaysUntilDue() {
+            return daysUntilDue;
+        }
+
+        /**
+         * Calculates a priority score based on effort and urgency.
+         * Formula: Priority = (Effort / DaysUntilDue) * 10 
+         */
+        public double calculatePriorityScore() {
+            // Handle tasks due today (daysUntilDue <= 0) by assigning a very high score
+            if (daysUntilDue <= 0) {
+                return estimatedEffortHours * 100.0; 
+            }
+            
+            // Priority increases with Effort and decreases with DaysUntilDue
+            return ((double) estimatedEffortHours / daysUntilDue) * 10;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%-40s | Effort: %2d hrs | Due In: %2d days | Priority Score: %.2f", 
+                                 description, 
+                                 estimatedEffortHours, 
+                                 daysUntilDue, 
+                                 calculatePriorityScore());
+        }
+    }
+    
+    // ====================================================================
+    // 2. PLANNER APP LOGIC (The Controller)
+    // ====================================================================
+
+    private List<StudyTask> taskList;
+
+    public PlannerApp() {
+        this.taskList = new ArrayList<>();
+    }
+
+    /**
+     * Adds a new task to the planner.
+     */
+    public void addTask(StudyTask task) {
+        taskList.add(task);
+    }
+
+    /**
+     * Sorts the tasks by their calculated priority score in descending order.
+     */
+    public void sortTasksByPriority() {
+        // Uses a Lambda expression to define the comparison logic based on the score
+        Collections.sort(taskList, Comparator.comparingDouble(StudyTask::calculatePriorityScore).reversed());
+    }
+
+    /**
+     * Prints the entire list of tasks, sorted by priority.
+     */
+    public void displayPrioritizedTasks() {
+        if (taskList.isEmpty()) {
+            System.out.println("Your planner is empty! Time to add some tasks.");
+            return;
+        }
+
+        // 1. Sort the list first
+        sortTasksByPriority();
+
+        System.out.println("\n==========================================================================");
+        System.out.println("SMART STUDY PLANNER: RECOMMENDED PRIORITY LIST");
+        System.out.println("==========================================================================");
+        System.out.println(String.format("%-40s | %-13s | %-12s | %s", "Task Description", "Effort", "Due", "Priority Score"));
+        System.out.println("--------------------------------------------------------------------------");
+        
+        // 2. Display the sorted tasks
+        for (int i = 0; i < taskList.size(); i++) {
+            StudyTask task = taskList.get(i);
+            // Highlight the highest priority task
+            String prefix = (i == 0) ? "NEXT UP: " : "   ";
+            System.out.println(prefix + task.toString());
+        }
+        System.out.println("--------------------------------------------------------------------------\n");
+    }
+
+    /**
+     * Main method: The entry point for the application.
+     */
+    public static void main(String[] args) {
+        // Create an instance of the planner app
+        PlannerApp planner = new PlannerApp();
+
+        // --- Demonstrate functionality by adding sample tasks ---
+        
+        // Task 1: High effort, 1 week away. Score: (15 / 7) * 10 = 21.43
+        planner.addTask(new StudyTask("Final Project - Implementation", 15, 7)); 
+        
+        // Task 2: Low effort, due tomorrow. Score: (2 / 1) * 10 = 20.00
+        planner.addTask(new StudyTask("Read Chapter 5 for History", 2, 1));     
+        
+        // Task 3: Medium effort, due in 2 days. Score: (5 / 2) * 10 = 25.00
+        planner.addTask(new StudyTask("Review Java Code", 5, 2));              
+        
+        // Task 4: Low effort, 2 weeks away. Score: (1 / 14) * 10 = 0.71
+        planner.addTask(new StudyTask("Plan next week's schedule", 1, 14));   
+
+        // 3. Display the prioritized list
+        planner.displayPrioritizedTasks();
+        
+        // 4. Demonstrate the highest priority task (due immediately)
+        System.out.println("\n--- SIMULATION: Adding a task due TODAY ---");
+        // Task 5: Due TODAY! Score: 3 * 100 = 300.00 (Will jump to the top)
+        planner.addTask(new StudyTask("Submit Lab Report", 3, 0)); 
+        planner.displayPrioritizedTasks();
+    }
+}
